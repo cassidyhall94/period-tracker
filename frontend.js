@@ -3,17 +3,20 @@ const periodEndDateInput = document.querySelector('.periodEndDate input[type="da
 
 function displayDate() {
     let dates = document.getElementById("savedDates")
-    let startDate = document.createElement("div")
-    let endDate = document.createElement("div")
+    // let startDate = document.createElement("div")
+    // let endDate = document.createElement("div")
+    // dates.style.fontSize = 20
+    // dates.style.backgroundColor = "cyan"
 
-    periodStartDateInput.addEventListener('input', function (start) {
-        startDate.value = start.srcElement.value
-        dates.append("Start: ", startDate.value, "\n")
+    periodStartDateInput.addEventListener('input', function (startDate) {
+        // startDate.value = start.srcElement.value
+        dates.append("Start: ", startDate.srcElement.value)
     });
 
-    periodEndDateInput.addEventListener('input', function (end) {
-        endDate.value = end.srcElement.value
-        dates.append("End: ", endDate.value, "\n")
+    periodEndDateInput.addEventListener('input', function (endDate) {
+        // endDate.value = end.srcElement.value
+        dates.append(" | ", "End: ", endDate.srcElement.value)
+        dates.style.display = "block"
     });
 }
 
