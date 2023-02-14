@@ -1,28 +1,20 @@
 const periodStartDateInput = document.querySelector('.periodStartDate input[type="date"]');
 const periodEndDateInput = document.querySelector('.periodEndDate input[type="date"]');
 
-
-
-function displayDate(start, end) {
-    console.log(start, end)
-    let dates = document.querySelector('.savedDates')
+function displayDate() {
+    let dates = document.getElementById("savedDates")
     let startDate = document.createElement("div")
     let endDate = document.createElement("div")
 
-    periodStartDateInput.addEventListener('input', function () {
-        // console.log(start)
-        startDate.value = start
-        // console.log(startDate.value)
-        dates.appendChild(startDate)
+    periodStartDateInput.addEventListener('input', function (start) {
+        startDate.value = start.srcElement.value
+        dates.append("Start: ", startDate.value, "\n")
     });
 
-    periodEndDateInput.addEventListener('input', function () {
-        // console.log(end)
-        endDate.value = end
-        // console.log(endDate.value)
-        dates.appendChild(endDate)
+    periodEndDateInput.addEventListener('input', function (end) {
+        endDate.value = end.srcElement.value
+        dates.append("End: ", endDate.value, "\n")
     });
-    // console.log(dates)
 }
 
-displayDate(periodStartDateInput.value, periodEndDateInput.value)
+displayDate()
