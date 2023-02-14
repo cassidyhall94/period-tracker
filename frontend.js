@@ -5,8 +5,6 @@ function displayDate() {
     let dates = document.getElementById("savedDates")
     // let startDate = document.createElement("div")
     // let endDate = document.createElement("div")
-    // dates.style.fontSize = 20
-    // dates.style.backgroundColor = "cyan"
 
     periodStartDateInput.addEventListener('input', function (startDate) {
         // startDate.value = start.srcElement.value
@@ -16,6 +14,7 @@ function displayDate() {
     periodEndDateInput.addEventListener('input', function (endDate) {
         // endDate.value = end.srcElement.value
         dates.append(" | ", "End: ", endDate.srcElement.value)
+        dates.appendChild(document.createElement("br"))
         dates.style.display = "block"
     });
 }
