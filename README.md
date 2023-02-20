@@ -11,3 +11,20 @@ Implement the functionality: The backend will be responsible for storing, retrie
 Test the app: Thorough testing should be performed on both the frontend and backend to ensure that the app works as expected and that there are no security vulnerabilities.
 
 Deploy the app: The app will be deployed on a server, and the frontend and backend will be connected to allow for seamless communication and data transfer.
+
+
+// Set up an IndexedDB database in your JavaScript code, with the appropriate object stores and indexes for the data you want to store.
+
+// Generate an encryption key using the Web Crypto API.
+
+// When the user inputs data into your application, encrypt the data using the encryption key.
+
+// Store the encrypted data in the appropriate object store in your IndexedDB database.
+
+// When the user needs to access the data, retrieve the encrypted data from the IndexedDB database and decrypt it using the encryption key.
+
+// Make sure to handle any errors that may occur during the encryption/decryption process.
+
+// Test your implementation thoroughly to ensure that the data is stored and retrieved correctly and securely.
+
+// Provide a way for the user to reset their encryption key or passphrase, in case they forget it.
