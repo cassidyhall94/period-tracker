@@ -1,10 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
-
 const periodStartDateInput = document.querySelector('.periodStartDate input[type="date"]');
 const periodEndDateInput = document.querySelector('.periodEndDate input[type="date"]');
 let userData = {};
 let periodStartDate;
 let periodEndDate;
+let userID = Math.random()
 
 function displayDate() {
     let dates = document.getElementById("savedDates");
@@ -19,7 +18,7 @@ function displayDate() {
         dates.append(" | ", "End: ", endDate.srcElement.value);
         dates.appendChild(document.createElement("br"));
         dates.style.display = "block";
-        userData = { id: uuidv4(), startDate: periodStartDate, endDate: periodEndDate };
+        userData = { id: userID, startDate: periodStartDate, endDate: periodEndDate };
     });
 }
 

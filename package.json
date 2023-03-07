@@ -1,0 +1,22 @@
+{
+  "name": "period-tracker",
+  "version": "1.0.0",
+  "description": "Define the functionalities: The app will only track the dates when a user's period starts and ends. Reminders will be given 2 days before their period is set to begin, it will also need to have the ability to predict when the next period will start using the user’s data collected over time.",
+  "main": "frontend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cassidyhall94/period-tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cassidyhall94/period-tracker/issues"
+  },
+  "homepage": "https://github.com/cassidyhall94/period-tracker#readme",
+  "dependencies": {
+    "uuid": "^9.0.0"
+  }
+}
