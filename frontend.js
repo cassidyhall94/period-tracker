@@ -3,7 +3,7 @@ const periodEndDateInput = document.querySelector('.periodEndDate input[type="da
 let userData = {};
 let periodStartDate;
 let periodEndDate;
-let userID = Math.random()
+let userID = "850f4438-6838-47d3-a812-67a822dd53bf"
 
 function displayDate() {
     let dates = document.getElementById("savedDates");
@@ -57,7 +57,7 @@ function createDatabase() {
         const db = event.target.result;
         const transaction = db.transaction(["user"], "readwrite");
         const objectStore = transaction.objectStore("user");
-        const request = objectStore.get(userData.id);
+        const request = objectStore.get(userID);
         request.onerror = (event) => {
             console.error(`Database error: ${event.target.errorCode}`);
         };
