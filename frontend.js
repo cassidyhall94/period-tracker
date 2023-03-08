@@ -39,25 +39,25 @@ function createDatabase() {
 
     console.log("hi")
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
         console.log("onupgraded initialising")
-        const db = event.target.result;
+        const db = request.result;
 
         // Create an objectStore to hold information about user
-        const objectStore = db.createObjectStore("user", { keyPath: "id" });
-        objectStore.createIndex("period_start_date", ["startDate"], { unique: true, })
-        objectStore.createIndex("period_end_date", ["endDate"], { unique: true, })
+        const userStore = db.createObjectStore("user", { keyPath: "id" });
+        userStore.createIndex("period_start_date", ["startDate"], { unique: true, })
+        userStore.createIndex("period_end_date", ["endDate"], { unique: true, })
         // Use transaction oncomplete to make sure the objectStore creation is
         // finished before adding data into it.
-        objectStore.transaction.oncomplete = (event) => {
+        userStore.transaction.oncomplete = (event) => {
             console.log("transaction initialising")
             // Store values in the newly created objectStore.
-            const userObjectStore = db.transaction("user", "readwrite").objectStore("user");
-            userObjectStore.add(userData);
-            userObjectStore.transaction.oncomplete = (event) => {
+            const userTransaction = db.transaction("user", "readwrite").objectStore("user");
+            userTransaction.add(userData);
+            userTransaction.transaction.oncomplete = (event) => {
                 console.log("User details added to database.");
             };
-            userObjectStore.transaction.onerror = (event) => {
+            userTransaction.transaction.onerror = (event) => {
                 console.error(`Database transaction error: ${event.target.errorCode}`);
             };
         };
@@ -65,18 +65,19 @@ function createDatabase() {
 
     console.log("hru")
 
-    request.onsuccess = (event) => {
+    request.onsuccess = () => {
         console.log("request success: ", request)
-        const db = event.target.result;
+        const db = request.result;
         const transaction = db.transaction(["user"], "readwrite");
         const objectStore = transaction.objectStore("user");
+        const startDateIndex = userStore.index("period_start_date")
+        const endDateIndex = userStore.index("period_end_date")
         const request = objectStore.get(userID);
         request.onerror = (event) => {
             console.error(`Database error: ${event.target.errorCode}`);
         };
-        request.onsuccess = (event) => {
-            const user = event.target.result;
-            console.log(event.target)
+        request.onsuccess = () => {
+            const user = request.result;
             console.log("User data retrieved from database:", user);
         };
     };
