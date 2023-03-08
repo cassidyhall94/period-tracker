@@ -19,68 +19,66 @@ function displayDate() {
         dates.appendChild(document.createElement("br"));
         dates.style.display = "block";
         userData = { id: userID, startDate: periodStartDate, endDate: periodEndDate };
-        createDatabase()
+        // createDatabase()
     });
     console.log("savedDates: ", dates.value)
 }
 
 displayDate();
 
-const request = window.indexedDB.open("database", 2);
+const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+const request = indexedDB.open("UserDatabase", 1);
 
-function createDatabase() {
-    console.log("DB userData: ", userData)
-    console.log("database initialising")
-    console.log("Before request: ", request)
+// function createDatabase() {
+request.onerror = (event) => {
+    console.error(`Database error: ${event.target.errorCode}`);
+};
 
-    request.onerror = (event) => {
-        console.error(`Database error: ${event.target.errorCode}`);
+console.log("hi")
+
+request.onupgradeneeded = () => {
+    console.log("onupgraded initialising")
+
+    const db = request.result;
+    const userStore = db.createObjectStore("user", { keyPath: "id" });
+    userStore.createIndex("period_start_date", ["startDate"], { unique: false, })
+    userStore.createIndex("period_end_date", ["endDate"], { unique: false, })
+
+    // userStore.transaction.oncomplete = (event) => {
+    //     console.log("transaction initialising")
+
+    //     const userTransaction = db.transaction("user", "readwrite").objectStore("user");
+    //     userTransaction.add(userData);
+    //     userTransaction.transaction.oncomplete = (event) => {
+    //         console.log("User details added to database.");
+    //     };
+    //     userTransaction.transaction.onerror = (event) => {
+    //         console.error(`Database transaction error: ${event.target.errorCode}`);
+    //     };
+    // };
+};
+
+console.log("hru")
+
+request.onsuccess = () => {
+    const db = request.result;
+    const transaction = db.transaction("user", "readwrite");
+
+    const userStore = transaction.objectStore("user");
+
+    userStore.put({ id: userData.id, startDate: "2023-03-07", endDate: "2023-03-14" })
+
+    const userIDQuery = userStore.get(userData.id)
+    console.log(userIDQuery)
+    userIDQuery.onerror = (event) => {
+        console.error(`Database userIDQuery error: ${event.target.errorCode}`);
     };
-
-    console.log("hi")
-
-    request.onupgradeneeded = () => {
-        console.log("onupgraded initialising")
-        const db = request.result;
-
-        // Create an objectStore to hold information about user
-        const userStore = db.createObjectStore("user", { keyPath: "id" });
-        userStore.createIndex("period_start_date", ["startDate"], { unique: true, })
-        userStore.createIndex("period_end_date", ["endDate"], { unique: true, })
-        // Use transaction oncomplete to make sure the objectStore creation is
-        // finished before adding data into it.
-        userStore.transaction.oncomplete = (event) => {
-            console.log("transaction initialising")
-            // Store values in the newly created objectStore.
-            const userTransaction = db.transaction("user", "readwrite").objectStore("user");
-            userTransaction.add(userData);
-            userTransaction.transaction.oncomplete = (event) => {
-                console.log("User details added to database.");
-            };
-            userTransaction.transaction.onerror = (event) => {
-                console.error(`Database transaction error: ${event.target.errorCode}`);
-            };
-        };
+    userIDQuery.onsuccess = () => {
+        const user = userIDQuery.result;
+        console.log("User data retrieved from database:", user);
     };
-
-    console.log("hru")
-
-    request.onsuccess = () => {
-        console.log("request success: ", request)
-        const db = request.result;
-        const transaction = db.transaction(["user"], "readwrite");
-        const objectStore = transaction.objectStore("user");
-        const startDateIndex = userStore.index("period_start_date")
-        const endDateIndex = userStore.index("period_end_date")
-        const request = objectStore.get(userID);
-        request.onerror = (event) => {
-            console.error(`Database error: ${event.target.errorCode}`);
-        };
-        request.onsuccess = () => {
-            const user = request.result;
-            console.log("User data retrieved from database:", user);
-        };
-    };
-    console.log("AFTER request: ", request)
-    console.log("bye")
-}
+    transaction.oncomplete = function () {
+        db.close()
+    }
+};
+// }
