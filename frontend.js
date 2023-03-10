@@ -19,66 +19,70 @@ function displayDate() {
         dates.appendChild(document.createElement("br"));
         dates.style.display = "block";
         userData = { id: userID, startDate: periodStartDate, endDate: periodEndDate };
-        // createDatabase()
     });
-    console.log("savedDates: ", dates.value)
 }
 
 displayDate();
 
-const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
-const request = indexedDB.open("UserDatabase", 1);
+function database() {
+    let userStore
+    let db
+    let request = indexedDB.open("UserDatabase", 10);
 
-// function createDatabase() {
-request.onerror = (event) => {
-    console.error(`Database error: ${event.target.errorCode}`);
-};
-
-console.log("hi")
-
-request.onupgradeneeded = () => {
-    console.log("onupgraded initialising")
-
-    const db = request.result;
-    const userStore = db.createObjectStore("user", { keyPath: "id" });
-    userStore.createIndex("period_start_date", ["startDate"], { unique: false, })
-    userStore.createIndex("period_end_date", ["endDate"], { unique: false, })
-
-    // userStore.transaction.oncomplete = (event) => {
-    //     console.log("transaction initialising")
-
-    //     const userTransaction = db.transaction("user", "readwrite").objectStore("user");
-    //     userTransaction.add(userData);
-    //     userTransaction.transaction.oncomplete = (event) => {
-    //         console.log("User details added to database.");
-    //     };
-    //     userTransaction.transaction.onerror = (event) => {
-    //         console.error(`Database transaction error: ${event.target.errorCode}`);
-    //     };
-    // };
-};
-
-console.log("hru")
-
-request.onsuccess = () => {
-    const db = request.result;
-    const transaction = db.transaction("user", "readwrite");
-
-    const userStore = transaction.objectStore("user");
-
-    userStore.put({ id: userData.id, startDate: "2023-03-07", endDate: "2023-03-14" })
-
-    const userIDQuery = userStore.get(userData.id)
-    console.log(userIDQuery)
-    userIDQuery.onerror = (event) => {
-        console.error(`Database userIDQuery error: ${event.target.errorCode}`);
+    request.onerror = (event) => {
+        console.error(`Database error: ${event.target.errorCode}`);
     };
-    userIDQuery.onsuccess = () => {
-        const user = userIDQuery.result;
-        console.log("User data retrieved from database:", user);
+
+    request.onsuccess = (event) => {
+        db = event.target.result
+        console.log("success", db)
     };
-    transaction.oncomplete = function () {
-        db.close()
-    }
-};
-// }
+
+    request.onupgradeneeded = (event) => {
+        console.log("onupgraded initialising")
+
+        db = event.target.result
+
+        let oldVersion = event.oldVersion
+        let newVersion = event.newVersion || db.version
+        console.log("DB updated from version", oldVersion, "to", newVersion)
+
+        if (!db.objectStoreNames.contains("user")) {
+            userStore = db.createObjectStore("user", { keyPath: "id" });
+        }
+        console.log(userStore)
+    };
+
+    periodEndDateInput.addEventListener('input', (event) => {
+        db = request.result
+        event.preventDefault()
+        let startDate = periodStartDate
+        let endDate = periodEndDate
+
+        let userInput = {
+            id: userID,
+            startDate,
+            endDate
+        }
+
+        let transaction = db.transaction("user", "readwrite")
+        transaction.oncomplete = (event) => {
+            console.log("transaction successful:", event)
+        }
+        transaction.onerror = (err) => {
+            console.log("transaction onerror:", err)
+        }
+
+        let store = transaction.objectStore("user")
+
+        let req = store.add(userInput)
+        req.onsuccess = (event) => {
+            console.log("successfully added User object into database,", event)
+        }
+        req.onerror = (err) => {
+            console.log("req onerror:", err)
+        }
+    })
+}
+
+database()
