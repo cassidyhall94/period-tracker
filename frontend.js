@@ -3,62 +3,63 @@ const periodEndDateInput = document.querySelector('.periodEndDate input[type="da
 let userData = {}; // object for user's data entered one at a time
 let periodStartDate;
 let periodEndDate;
-let username = document.getElementById('username') // username entered by user
-let userID //
-let userStore
-// let userID = "850f4438-6838-47d3-a812-67a822dd53bf"
-
+let userElement = document.getElementById('username') // username entered by user
+let username
 let db
 let request = indexedDB.open("UserDatabase", 10);
 
-// function uuidv4() {
-//     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-//         (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-//     );
-// }
-
-function getDatesByUsername(userID) {
-    db = request.result
-    let reqUsername = db.transaction('user').objectStore('user').getAll(userID)
-    reqUsername.onsuccess = () => {
-        let user = reqUsername.result
-        let dates = document.getElementById("savedDates");
-        dates.append("Start: ", user.startDate);
-        dates.append(" | ", "End: ", user.endDate);
-        dates.appendChild(document.createElement("br"));
-        dates.style.display = "block";
-    }
-
-    reqUsername.onerror = (err) => {
-        console.log("Error retrieving", userID, "'s saved dates:", err)
-    }
+function uuidv4() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
 }
 
-function displayDate() {
-    username.addEventListener('keypress', function (e) {
+function displayDates() {
+    let dates = document.getElementById("savedDates");
+    userElement.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
-            userID = username.value
-            getDatesByUsername(userID)
+            e.preventDefault()
+            username = userElement.value
+            let tx = makeTX('user', 'readonly')
+            tx.oncomplete = (event) => {
+                console.log("get transaction complete")
+            }
+
+            let store = tx.objectStore('user')
+            let req = store.get(username)
+            console.log(req)
+            req.onsuccess = (event) => {
+                let request = event.target
+                let user = request.result
+                console.log(user)
+                periodStartDate = startDate.srcElement.value;
+                dates.append("Start: ", user.startDate);
+                dates.append(" | ", "End: ", user.endDate);
+                dates.appendChild(document.createElement("br"));
+                dates.style.display = "block"
+            }
         }
     });
-    console.log(userID)
-    let dates = document.getElementById("savedDates");
 
-    periodStartDateInput.addEventListener('input', function (startDate) {
-        periodStartDate = startDate.srcElement.value;
-        dates.append("Start: ", startDate.srcElement.value);
-    });
+    let tx = makeTX('user', 'readonly')
+    tx.oncomplete = (event) => {
+        console.log("all objects read")
+    }
 
-    periodEndDateInput.addEventListener('input', function (endDate) {
-        periodEndDate = endDate.srcElement.value;
-        dates.append(" | ", "End: ", endDate.srcElement.value);
-        dates.appendChild(document.createElement("br"));
-        dates.style.display = "block";
-        userData = { id: userID, startDate: periodStartDate, endDate: periodEndDate };
-    });
+    let store = tx.objectStore('user')
+    let getDates = store.getAll()
+
+    getDates.onsuccess = (event) => {
+        let req = event.target
+        console.log(req.result)
+        dates.innerHTML = req.result
+        dates.style.display = "block"
+
+    }
+    getDates.onerror = (err) => {
+        console.warn(err);
+    };
 }
-
-displayDate();
 
 function database() {
     request.onerror = (event) => {
@@ -80,34 +81,40 @@ function database() {
         console.log("DB updated from version", oldVersion, "to", newVersion)
 
         if (!db.objectStoreNames.contains("user")) {
-            userStore = db.createObjectStore("user", { keyPath: "id" });
+            let userStore = db.createObjectStore("user", { keyPath: "id" });
+            console.log("Object Store created:", userStore)
         }
-        console.log("userstore:", userStore)
     };
 
     periodEndDateInput.addEventListener('input', (event) => {
         db = request.result
         event.preventDefault()
-        let startDate = periodStartDate
-        let endDate = periodEndDate
-
+        username = document.getElementById('username').value
+        let startDate = periodStartDateInput.value
+        let endDate = event.srcElement.value
+        if (username.length === 0) {
+            username = "Cassidy"
+        }
         let userInput = {
-            id: userID,
+            // id: userData.id,
+            id: uuidv4(),
+            username: username,
             startDate,
             endDate
         }
 
-        let transaction = db.transaction("user", "readwrite")
+        let transaction = makeTX("user", "readwrite")
         transaction.oncomplete = (event) => {
             console.log("transaction successful:", event)
+            displayDates()
         }
         transaction.onerror = (err) => {
             console.log("transaction onerror:", err)
         }
 
         let store = transaction.objectStore("user")
-
         let req = store.add(userInput)
+
         req.onsuccess = (event) => {
             console.log("successfully added User object into database,", event)
         }
@@ -119,3 +126,10 @@ function database() {
 
 database()
 
+function makeTX(storeName, mode) {
+    let tx = db.transaction(storeName, mode);
+    tx.onerror = (err) => {
+        console.warn(err);
+    };
+    return tx;
+}
