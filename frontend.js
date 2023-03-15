@@ -1,10 +1,11 @@
 const periodStartDateInput = document.querySelector('.periodStartDate input[type="date"]');
 const periodEndDateInput = document.querySelector('.periodEndDate input[type="date"]');
-let userData = {};
+let userData = {}; // object for user's data entered one at a time
 let periodStartDate;
 let periodEndDate;
-let username = document.getElementById('username')
-let userID
+let username = document.getElementById('username') // username entered by user
+let userID //
+let userStore
 // let userID = "850f4438-6838-47d3-a812-67a822dd53bf"
 
 let db
@@ -16,7 +17,31 @@ let request = indexedDB.open("UserDatabase", 10);
 //     );
 // }
 
+function getDatesByUsername(userID) {
+    db = request.result
+    let reqUsername = db.transaction('user').objectStore('user').getAll(userID)
+    reqUsername.onsuccess = () => {
+        let user = reqUsername.result
+        let dates = document.getElementById("savedDates");
+        dates.append("Start: ", user.startDate);
+        dates.append(" | ", "End: ", user.endDate);
+        dates.appendChild(document.createElement("br"));
+        dates.style.display = "block";
+    }
+
+    reqUsername.onerror = (err) => {
+        console.log("Error retrieving", userID, "'s saved dates:", err)
+    }
+}
+
 function displayDate() {
+    username.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            userID = username.value
+            getDatesByUsername(userID)
+        }
+    });
+    console.log(userID)
     let dates = document.getElementById("savedDates");
 
     periodStartDateInput.addEventListener('input', function (startDate) {
@@ -36,7 +61,6 @@ function displayDate() {
 displayDate();
 
 function database() {
-    let userStore
     request.onerror = (event) => {
         console.error(`Database error: ${event.target.errorCode}`);
     };
@@ -58,7 +82,7 @@ function database() {
         if (!db.objectStoreNames.contains("user")) {
             userStore = db.createObjectStore("user", { keyPath: "id" });
         }
-        // console.log(userStore)
+        console.log("userstore:", userStore)
     };
 
     periodEndDateInput.addEventListener('input', (event) => {
@@ -95,28 +119,3 @@ function database() {
 
 database()
 
-function displayUserDates(user) {
-    
-}
-
-function getDatesByUsername(userIDKey) {
-    db = request.result
-    let reqUsername = db.transaction('user').objectStore('user').get(userIDKey)
-
-    reqUsername.onsuccess = () => {
-        let user = reqUsername.result
-        console.log("user: ", user)
-        displayUserDates(user)
-    }
-
-    reqUsername.onerror = (err) => {
-        console.log("Error retrieving", userIDKey, "'s saved dates:", err)
-    }
-}
-
-username.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        userID = username.value
-        getDatesByUsername(userID)
-    }
-});
