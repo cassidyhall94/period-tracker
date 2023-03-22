@@ -5,8 +5,9 @@ let periodStartDate;
 let periodEndDate;
 let userElement = document.getElementById('username') // username entered by user
 let username
-let db
 let request = indexedDB.open("UserDatabase", 10);
+let db
+let dates = document.getElementById("savedDates");
 
 function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -15,31 +16,6 @@ function uuidv4() {
 }
 
 function displayDates() {
-    let dates = document.getElementById("savedDates");
-    userElement.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            username = userElement.value
-            let tx = makeTX('user', 'readonly')
-            tx.oncomplete = (event) => {
-                console.log("get transaction complete")
-            }
-
-            let store = tx.objectStore('user')
-            let req = store.get(username)
-            console.log(req)
-            req.onsuccess = (event) => {
-                let request = event.target
-                let user = request.result
-                console.log(user)
-                periodStartDate = startDate.srcElement.value;
-                dates.append("Start: ", user.startDate);
-                dates.append(" | ", "End: ", user.endDate);
-                dates.appendChild(document.createElement("br"));
-                dates.style.display = "block"
-            }
-        }
-    });
 
     let tx = makeTX('user', 'readonly')
     tx.oncomplete = (event) => {
@@ -51,15 +27,30 @@ function displayDates() {
 
     getDates.onsuccess = (event) => {
         let req = event.target
-        console.log(req.result)
-        dates.innerHTML = req.result
-        dates.style.display = "block"
-
+        let user = req.result
+        username = document.getElementById('username').value
+        user.forEach(date => {
+            console.log("date.username:", date.username, "username:", username)
+            if (date.username === username) {
+                dates.append("Username: ", date.username)
+                dates.append(" | ", "Start: ", date.startDate);
+                dates.append(" | ", "End: ", date.endDate);
+                dates.appendChild(document.createElement("br"));
+                dates.style.display = "block"
+            }
+        });
     }
     getDates.onerror = (err) => {
         console.warn(err);
     };
 }
+
+userElement.addEventListener('keypress', function (e) {
+    if (e.key === "Enter") {
+        e.preventDefault()
+        displayDates()
+    }
+});
 
 function database() {
     request.onerror = (event) => {
@@ -96,7 +87,6 @@ function database() {
             username = "Cassidy"
         }
         let userInput = {
-            // id: userData.id,
             id: uuidv4(),
             username: username,
             startDate,
@@ -105,8 +95,12 @@ function database() {
 
         let transaction = makeTX("user", "readwrite")
         transaction.oncomplete = (event) => {
-            console.log("transaction successful:", event)
-            displayDates()
+            console.log("transaction oncomplete:", event)
+            dates.append("Username: ", userInput.username)
+            dates.append(" | ", "Start: ", userInput.startDate);
+            dates.append(" | ", "End: ", userInput.endDate);
+            dates.appendChild(document.createElement("br"));
+            dates.style.display = "block"
         }
         transaction.onerror = (err) => {
             console.log("transaction onerror:", err)
