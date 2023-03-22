@@ -1,6 +1,6 @@
 const periodStartDateInput = document.querySelector('.periodStartDate input[type="date"]');
 const periodEndDateInput = document.querySelector('.periodEndDate input[type="date"]');
-let userData = {}; // object for user's data entered one at a time
+let userData = []// object for user's data entered one at a time
 let periodStartDate;
 let periodEndDate;
 let userElement = document.getElementById('username') // username entered by user
@@ -29,20 +29,52 @@ function displayDates() {
         let req = event.target
         let user = req.result
         username = document.getElementById('username').value
+
         user.forEach(date => {
-            console.log("date.username:", date.username, "username:", username)
             if (date.username === username) {
                 dates.append("Username: ", date.username)
                 dates.append(" | ", "Start: ", date.startDate);
                 dates.append(" | ", "End: ", date.endDate);
                 dates.appendChild(document.createElement("br"));
                 dates.style.display = "block"
+                userData.push({
+                    id: date.id,
+                    username: date.username,
+                    startDate: date.startDate,
+                    endDate: date.endDate
+                })
             }
         });
+
+        // eventlistener on the backup button, creates a JSON file that is then downloaded to the user's device
+        document.getElementById('backup').addEventListener('click', function (e) {
+            console.log("backup successfully downloaded")
+            let jsonDates = JSON.stringify(userData)
+            let file = new File([jsonDates], 'backup.json', { type: 'application/json' })
+            let fileUrl = URL.createObjectURL(file);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = fileUrl;
+            downloadLink.download = file.name;
+            downloadLink.click();
+        })
     }
+
     getDates.onerror = (err) => {
         console.warn(err);
     };
+}
+
+function restoreDates() {
+    document.getElementById('restore').addEventListener('click', function (e) {
+        //TODO:
+        // Use the File API to read the JSON file from the user's device. You can use the FileReader object to read the file as text.
+
+        // Once you have read the JSON file, you can use the JSON.parse() method to parse the JSON data into a JavaScript object.
+
+        // Create an IndexedDB database and object store to store the data. You can use the indexedDB global variable to create the database and object store.
+
+        // Use the put() method of the object store to save the parsed data into the IndexedDB database.
+    })
 }
 
 userElement.addEventListener('keypress', function (e) {
@@ -96,9 +128,12 @@ function database() {
         let transaction = makeTX("user", "readwrite")
         transaction.oncomplete = (event) => {
             console.log("transaction oncomplete:", event)
-            dates.append("Username: ", userInput.username)
-            dates.append(" | ", "Start: ", userInput.startDate);
-            dates.append(" | ", "End: ", userInput.endDate);
+
+            let userStr = "Username: " + userInput.username + " | " + "Start: " + userInput.startDate + " | " + "End: " + userInput.endDate
+            dates.append(userStr)
+            // dates.append("Username: ", userInput.username)
+            // dates.append(" | ", "Start: ", userInput.startDate);
+            // dates.append(" | ", "End: ", userInput.endDate);
             dates.appendChild(document.createElement("br"));
             dates.style.display = "block"
         }
