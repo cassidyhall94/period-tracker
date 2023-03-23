@@ -5,7 +5,7 @@ let periodStartDate;
 let periodEndDate;
 let userElement = document.getElementById('username') // username entered by user
 let username
-let request = indexedDB.open("UserDatabase", 10);
+let request = indexedDB.open("UserDatabase", 13);
 let db
 let dates = document.getElementById("savedDates");
 
@@ -64,25 +64,107 @@ function displayDates() {
     };
 }
 
-function restoreDates() {
-    document.getElementById('restore').addEventListener('click', function (e) {
-        //TODO:
-        // Use the File API to read the JSON file from the user's device. You can use the FileReader object to read the file as text.
+//TODO:
+// Use the File API to read the JSON file from the user's device. You can use the FileReader object to read the file as text.
 
-        // Once you have read the JSON file, you can use the JSON.parse() method to parse the JSON data into a JavaScript object.
+// Once you have read the JSON file, you can use the JSON.parse() method to parse the JSON data into a JavaScript object.
 
-        // Create an IndexedDB database and object store to store the data. You can use the indexedDB global variable to create the database and object store.
+// Create an IndexedDB database and object store to store the data. You can use the indexedDB global variable to create the database and object store.
 
-        // Use the put() method of the object store to save the parsed data into the IndexedDB database.
-    })
-}
+// Use the put() method of the object store to save the parsed data into the IndexedDB database.
+
+// const fileInput = document.querySelector("input[type=file]");
+
+// fileInput.addEventListener("change", () => {
+//     let userBackupData = []
+//     const file = fileInput.files[0];
+//     const reader = new FileReader();
+//     reader.onload = (e) => {
+//         let jsonData = JSON.parse(e.target.result)
+//         // console.log("jsonData:", jsonData)
+
+//         jsonData.forEach(entry => {
+//             let backupInput = {
+//                 id: entry.id,
+//                 username: entry.username,
+//                 startDate: entry.startDate,
+//                 endDate: entry.endDate
+//             }
+//             userBackupData.push(backupInput)
+//         })
+//         db = request.result
+
+//         let transaction = makeTX("user", "readwrite")
+//         transaction.oncomplete = () => {
+//             console.log('backup transaction successful');
+//         };
+//         transaction.onerror = () => {
+//             console.error('Error with backup data');
+//         };
+//         let userStore = db.createObjectStore("user", { keyPath: "id" })
+//         let tx = transaction.userStore("user")
+//         console.log(userBackupData)
+//         let req = tx.add(userBackupData)
+//         console.log(req)
+//         req.onsuccess = (event) => {
+//             console.log("successfully added User backup object into database,", event)
+//         }
+//         req.onerror = (err) => {
+//             console.log("req backup onerror:", err)
+//         }
+//     }
+//     reader.readAsText(file)
+//     displayDates()
+// });
+
+const fileInput = document.querySelector('input[type="file"]');
+fileInput.addEventListener('change', () => {
+    let req = indexedDB.open("UserDatabase", 14);
+    let userBackupData = []
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const jsonData = JSON.parse(event.target.result);
+        jsonData.forEach(entry => {
+            let backupInput = {
+                id: entry.id,
+                username: entry.username,
+                startDate: entry.startDate,
+                endDate: entry.endDate
+            }
+            userBackupData.push(backupInput)
+        });
+        console.log(userBackupData)
+        console.log(req)
+        req.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            const userStore = db.createObjectStore('user', { keyPath: 'id' });
+        };
+        req.onsuccess = (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction(['user'], 'readwrite');
+            const userStore = transaction.objectStore('user');
+
+            // Save the parsed data into the IndexedDB database
+            userStore.put(userBackupData);
+
+            transaction.oncomplete = () => {
+                console.log('Data saved successfully.');
+            };
+            transaction.onerror = () => {
+                console.error('Error saving data.');
+            };
+        };
+    };
+    reader.readAsText(file);
+});
 
 userElement.addEventListener('keypress', function (e) {
     if (e.key === "Enter") {
         e.preventDefault()
         displayDates()
     }
-});
+})
 
 function database() {
     request.onerror = (event) => {
