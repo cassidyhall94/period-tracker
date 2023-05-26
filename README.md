@@ -1,30 +1,10 @@
-Define the functionalities: The app will only track the dates when a user's period starts and ends. Reminders will be given 2 days before their period is set to begin, it will also need to have the ability to predict when the next period will start using the user’s data collected over time.
+Period Tracker
+With a deep passion for empowering individuals and safeguarding women's rights, I am working on a unique project to develop an intuitive app for menstrual cycle tracking. In light of recent challenges to women's rights, particularly the revocation of the Roe v. Wade decision, I believe it is crucial to provide people with control over their data, ensuring it cannot be tracked or sold to companies.
 
-Choose a technology stack: The backend will be built using Golang, and the frontend will be built using JavaScript and HTML/CSS.
+The primary objective of this project is to create a secure and private platform where users can effortlessly monitor their menstrual cycles while preserving their privacy. By prioritising data ownership and protection, I am designing an app that allows users to have full authority over their personal information, preventing any unauthorised access or misuse.
 
-Design the data model: A database will be used to store the menstrual cycle data for each user. This data will be accessible and owned by the user, with proper measures in place to ensure the privacy and security of their data.
+The app will offer a user-friendly interface, enabling seamless tracking of period start and end dates. Additionally, it will provide helpful reminders two days prior to the expected start of each period, as well as predictive features based on individual user data, empowering users with insights into their future cycle start dates.
 
-Set up the user interface: The frontend interface will be designed using JavaScript and HTML/CSS. It will include a calendar view for tracking and displaying menstrual cycle information.
+In these uncertain times, it is crucial to support personal agency and privacy. Through this project, I aim to contribute to these discussions by providing a valuable resource that empowers individuals to make informed decisions about their reproductive health.
 
-Implement the functionality: The backend will be responsible for storing, retrieving, and processing the menstrual cycle data, while the frontend will be responsible for displaying the data to the user and providing an interface for users to interact with the app.
-
-Test the app: Thorough testing should be performed on both the frontend and backend to ensure that the app works as expected and that there are no security vulnerabilities.
-
-Deploy the app: The app will be deployed on a server, and the frontend and backend will be connected to allow for seamless communication and data transfer.
-
-
-// Set up an IndexedDB database in your JavaScript code, with the appropriate object stores and indexes for the data you want to store.
-
-// Generate an encryption key using the Web Crypto API.
-
-// When the user inputs data into your application, encrypt the data using the encryption key.
-
-// Store the encrypted data in the appropriate object store in your IndexedDB database.
-
-// When the user needs to access the data, retrieve the encrypted data from the IndexedDB database and decrypt it using the encryption key.
-
-// Make sure to handle any errors that may occur during the encryption/decryption process.
-
-// Test your implementation thoroughly to ensure that the data is stored and retrieved correctly and securely.
-
-// Provide a way for the user to reset their encryption key or passphrase, in case they forget it.
+By combining user-centric design, cutting-edge technology, and a commitment to privacy, my project strives to make a positive impact, helping users reclaim control over their menstrual cycle tracking and emphasising the importance of data ownership and personal autonomy.
