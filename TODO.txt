@@ -1,0 +1,30 @@
+Define the functionalities: The app will only track the dates when a user's period starts and ends. Reminders will be given 2 days before their period is set to begin, it will also need to have the ability to predict when the next period will start using the user’s data collected over time.
+
+Choose a technology stack: The backend will be built using Golang, and the frontend will be built using JavaScript and HTML/CSS.
+
+Design the data model: A database will be used to store the menstrual cycle data for each user. This data will be accessible and owned by the user, with proper measures in place to ensure the privacy and security of their data.
+
+Set up the user interface: The frontend interface will be designed using JavaScript and HTML/CSS. It will include a calendar view for tracking and displaying menstrual cycle information.
+
+Implement the functionality: The backend will be responsible for storing, retrieving, and processing the menstrual cycle data, while the frontend will be responsible for displaying the data to the user and providing an interface for users to interact with the app.
+
+Test the app: Thorough testing should be performed on both the frontend and backend to ensure that the app works as expected and that there are no security vulnerabilities.
+
+Deploy the app: The app will be deployed on a server, and the frontend and backend will be connected to allow for seamless communication and data transfer.
+
+
+// Set up an IndexedDB database in your JavaScript code, with the appropriate object stores and indexes for the data you want to store.
+
+// Generate an encryption key using the Web Crypto API.
+
+// When the user inputs data into your application, encrypt the data using the encryption key.
+
+// Store the encrypted data in the appropriate object store in your IndexedDB database.
+
+// When the user needs to access the data, retrieve the encrypted data from the IndexedDB database and decrypt it using the encryption key.
+
+// Make sure to handle any errors that may occur during the encryption/decryption process.
+
+// Test your implementation thoroughly to ensure that the data is stored and retrieved correctly and securely.
+
+// Provide a way for the user to reset their encryption key or passphrase, in case they forget it.
