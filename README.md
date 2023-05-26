@@ -1,4 +1,3 @@
-Period Tracker
 With a deep passion for empowering individuals and safeguarding women's rights, I am working on a unique project to develop an intuitive app for menstrual cycle tracking. In light of recent challenges to women's rights, particularly the revocation of the Roe v. Wade decision, I believe it is crucial to provide people with control over their data, ensuring it cannot be tracked or sold to companies.
 
 The primary objective of this project is to create a secure and private platform where users can effortlessly monitor their menstrual cycles while preserving their privacy. By prioritising data ownership and protection, I am designing an app that allows users to have full authority over their personal information, preventing any unauthorised access or misuse.
